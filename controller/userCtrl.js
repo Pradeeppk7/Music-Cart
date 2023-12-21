@@ -37,4 +37,6 @@ const loginUser = expressAsyncHandler(async (req, res) => {
         throw new Error("Invalid Credentials");
         }
 });
-module.exports = { createUser, loginUser };
+
+const logout=expressAsyncHandler()
+module.exports = { createUser, loginUser, logout };
