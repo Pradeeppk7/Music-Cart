@@ -21,10 +21,8 @@ const createUser = expressAsyncHandler(async (req, res) => {
 
 const handleRefreshToken = expressAsyncHandler(async (req, res) => {
     const cookie = req.cookies;
-    console.log(cookie);
     if (!cookie?.refreshToken) throw new Error("No Refresh Token in Cookies");
     const refreshToken = cookie.refreshToken;
-    console.log(refreshToken);
     const user = await User.findOne({ refreshToken });
     if (!user) {
         throw new Error("No Refresh token present in db or  not matched");
@@ -68,5 +66,25 @@ const loginUser = expressAsyncHandler(async (req, res) => {
         }
 });
 
-const logout=expressAsyncHandler()
+const logout = expressAsyncHandler(async (req, res) => {
+    const cookie = req.cookies;
+    if (!cookie?.refreshToken) throw new Error("No Refresh Token in  Cookies");
+    const refreshToken = cookie.refreshToken;
+    const user = await User.findOne({ refreshToken });
+    if (!user) {
+        res.clearCookie("refreshToken", {
+            httpOnly: true,
+            secure: true,
+        });
+        return res.sendStatus(204);
+    }
+    await User.findOneAndUpdate({ refreshToken }, {
+        refreshToken: "",
+    });
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: true,
+    });
+    res.sendStatus(204);
+});
 module.exports = { createUser, loginUser, logout ,handleRefreshToken };
