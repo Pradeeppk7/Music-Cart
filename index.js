@@ -6,12 +6,14 @@ const dbConnect = require("./config/dbConnect");
 const authRouter = require('./routes/authRoute');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
 const { errorHandler, notFound } = require('./middlewares/errorHandler');
 dbConnect();
 app.use(morgan('tiny'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+app.use(cookieParser());
 
 app.use("/api/user", authRouter);
 
